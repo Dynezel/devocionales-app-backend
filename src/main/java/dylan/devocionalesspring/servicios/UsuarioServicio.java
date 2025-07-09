@@ -72,7 +72,7 @@ public class UsuarioServicio implements UserDetailsService {
                                  String contrasenia,
                                  String contrasenia2,
                                  MultipartFile fotoArchivo,
-                                 MultipartFile bannerArchivo) throws MiExcepcion, IOException {
+                                 MultipartFile bannerArchivo) throws MiExcepcion, IOException, UsuarioNoEncontradoExcepcion {
         validarDatosRegistro(nombre, email, celular, contrasenia, contrasenia2);
         Usuario usuario = new Usuario();
         usuario.setNombre(nombre);
@@ -83,17 +83,23 @@ public class UsuarioServicio implements UserDetailsService {
         usuario.setContrasenia(new BCryptPasswordEncoder().encode(contrasenia));
         usuario.setRol(Rol.USUARIO);
 
-        if (!fotoArchivo.isEmpty()) {
+        if (fotoArchivo != null && !fotoArchivo.isEmpty()) {
             Imagen fotoPerfil = imagenServicio.guardarImagen(fotoArchivo);
             usuario.setFotoPerfil(fotoPerfil);
         }
 
-        if (!bannerArchivo.isEmpty()) {
+        if (bannerArchivo != null && !bannerArchivo.isEmpty()) {
             Imagen bannerPerfil = imagenServicio.guardarImagen(bannerArchivo);
             usuario.setBannerPerfil(bannerPerfil);
         }
 
-        usuarioRepositorio.save(usuario);
+        Usuario usuario2 = usuarioRepositorio.buscarPorEmail(email);
+        if(usuario2 == null) {
+            usuarioRepositorio.save(usuario);
+        }
+        else {
+            throw new UsuarioNoEncontradoExcepcion("El usuario con el email: " + email + " ya existe" );
+        }
     }
 
     @Transactional
