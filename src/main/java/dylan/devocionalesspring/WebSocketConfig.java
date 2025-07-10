@@ -22,4 +22,13 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws-notifications").setAllowedOrigins("https://devocionales-app-frontend.vercel.app").withSockJS();
     }
+
+    static class CustomHandshakeHandler extends DefaultHandshakeHandler {
+        @Override
+        protected Principal determineUser(ServerHttpRequest request, WebSocketHandler wsHandler, Map<String, Object> attributes) {
+            ServletServerHttpRequest servletRequest = (ServletServerHttpRequest) request;
+            String userId = servletRequest.getServletRequest().getParameter("userId");
+            return () -> userId; // Usamos el ID del usuario como nombre del principal
+        }
+    }
 }
