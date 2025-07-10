@@ -24,21 +24,24 @@ public class ChatWebSocketController {
 
     // Cliente envía a: /app/chat.send
     @MessageMapping("/chat.send")
-    @SendToUser("/queue/messages")
-    public MensajeDTO enviarMensajeWebSocket(@Payload Map<String, String> payload) {
+    public void enviarMensajeWebSocket(@Payload Map<String, String> payload) {
         Long emisorId = Long.parseLong(payload.get("emisorId"));
         Long receptorId = Long.parseLong(payload.get("receptorId"));
         String contenido = payload.get("contenido");
 
         Mensaje mensaje = mensajeServicio.enviarMensaje(emisorId, receptorId, contenido);
 
-        return new MensajeDTO(
+        MensajeDTO mensajeDTO = new MensajeDTO(
                 mensaje.getId(),
                 mensaje.getContenido(),
                 mensaje.getFechaEnvio(),
                 new UsuarioDTO(mensaje.getEmisor()),
                 new UsuarioDTO(mensaje.getReceptor())
         );
+
+        // Notificar a emisor y receptor en tiempo real
+        messagingTemplate.convertAndSendToUser(mensaje.getEmisor().getIdUsuario().toString(), "/queue/messages", mensajeDTO);
+        messagingTemplate.convertAndSendToUser(mensaje.getReceptor().getIdUsuario().toString(), "/queue/messages", mensajeDTO);
     }
 
 }
