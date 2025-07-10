@@ -1,23 +1,23 @@
-# Etapa de construcción
-FROM eclipse-temurin:17-jdk AS build
+# Etapa de construcción con Maven y Java
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
 
-# Copia los archivos necesarios para construir el proyecto
+# Copia el código fuente
 COPY pom.xml .
 COPY src ./src
 
-# Empaqueta el proyecto (sin correr los tests)
-RUN mvn -ntp clean package -DskipTests
+# Compila el proyecto (sin correr los tests)
+RUN mvn clean package -DskipTests
 
-# Etapa final: imagen liviana
+# Etapa de ejecución (más liviana)
 FROM eclipse-temurin:17-jdk
 WORKDIR /app
 
-# Copia el .jar generado desde la etapa anterior
+# Copia el .jar desde la etapa anterior
 COPY --from=build /app/target/*.jar app.jar
 
 # Expone el puerto por defecto de Spring Boot
 EXPOSE 8080
 
-# Comando para iniciar la app
+# Inicia la aplicación
 ENTRYPOINT ["java", "-jar", "app.jar"]
