@@ -55,7 +55,7 @@ public class SeguridadWeb {
         http
                 .csrf(AbstractHttpConfigurer::disable)  // Desactivar CSRF para simplificar el ejemplo
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/logincheck", "/css/**", "/js/**", "/img/**", "/videos/**", "/**").permitAll()
+                        .requestMatchers("/login", "/logincheck", "/css/**", "/js/**", "/img/**", "/videos/**", "/ws-notifications/**", "/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                 )
                 .formLogin(form -> form
