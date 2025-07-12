@@ -39,14 +39,13 @@ public class AmistadServicio {
 
         Usuario usuarioSolicitante = usuarioServicio.obtenerUsuarioPorId(usuarioId);
 
-        Notificacion notificacion = notificacionServicio.crearNotificacion(
+        notificacionServicio.crearNotificacion(
                 "solicitudamistad",
                 usuarioSolicitante.getNombre() + " Te ha enviado una solicitud de amistad",
                 Collections.singletonList(amigoId),
                 usuarioId,
                 ""
         );
-        notificacionRepositorio.save(notificacion);
 
         return amistadRepositorio.save(amistad);
         }
