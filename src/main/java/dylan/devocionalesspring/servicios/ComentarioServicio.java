@@ -82,14 +82,13 @@ public class ComentarioServicio {
 
             if(notificacionExistente.isEmpty()) {
                 // Crear una nueva notificación si no existe una previa
-                Notificacion notificacion = notificacionServicio.crearNotificacion(
+                notificacionServicio.crearNotificacion(
                         "comentario",
                         usuario.getNombre() + " ha comentado en tu devocional",
                         Collections.singletonList(usuarioReceptorId),
                         usuario.getIdUsuario(),
                         urlNotificacion
                 );
-                notificacionRepositorio.save(notificacion);
             }
         }
 
