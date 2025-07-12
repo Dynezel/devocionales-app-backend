@@ -3,6 +3,7 @@ package dylan.devocionalesspring.servicios;
 import dylan.devocionalesspring.entidades.Notificacion;
 import dylan.devocionalesspring.repositorios.NotificacionRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -19,16 +20,31 @@ public class NotificacionServicio {
         return notificacionRepositorio.findByUsuarioReceptorId(Collections.singletonList(usuarioId));
     }
 
-    public Notificacion crearNotificacion(String tipo, String mensaje, List<Long> usuarioReceptorId, Long usuarioEmisorId, String a) {
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
+
+    public Notificacion crearNotificacion(String tipo, String mensaje, List<Long> usuarioReceptorId, Long usuarioEmisorId, String url) {
         Notificacion notificacion = new Notificacion();
         notificacion.setTipo(tipo);
         notificacion.setMensaje(mensaje);
         notificacion.setUsuarioReceptorId(usuarioReceptorId);
         notificacion.setUsuarioEmisorId(usuarioEmisorId);
-        notificacion.setUrl(a);
+        notificacion.setUrl(url);
         notificacion.setVisto(false);
         notificacion.setTimestamp(LocalDateTime.now());
-        return notificacionRepositorio.save(notificacion);
+
+        Notificacion guardada = notificacionRepositorio.save(notificacion);
+
+        // Enviar notificación por WebSocket a cada receptor
+        for (Long receptorId : usuarioReceptorId) {
+            messagingTemplate.convertAndSendToUser(
+                    receptorId.toString(),
+                    "/queue/notificaciones",
+                    guardada
+            );
+        }
+
+        return guardada;
     }
 
     public List<Notificacion> obtenerNotificacionesNoLeidas(Long usuarioId) {

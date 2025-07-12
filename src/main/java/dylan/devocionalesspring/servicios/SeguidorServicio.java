@@ -6,6 +6,7 @@ import dylan.devocionalesspring.repositorios.SeguidorRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +15,8 @@ public class SeguidorServicio {
 
     @Autowired
     private SeguidorRepositorio seguidorRepositorio;
+    @Autowired
+    private NotificacionServicio notificacionServicio;
 
     public Seguidor seguir(Long usuarioId, Long seguidoId) {
         if (seguidorRepositorio.findByUsuarioIdUsuarioAndSeguidoIdUsuario(usuarioId, seguidoId).isPresent()) {
@@ -22,6 +25,13 @@ public class SeguidorServicio {
         Seguidor seguidor = new Seguidor();
         seguidor.setUsuario(new Usuario(usuarioId));
         seguidor.setSeguido(new Usuario(seguidoId));
+        notificacionServicio.crearNotificacion(
+                "seguimiento",
+                seguidor.getUsuario().getNombre() + " ha comenzado a seguirte",
+                Collections.singletonList(seguidoId),
+                usuarioId,
+                "/perfil/" + usuarioId
+        );
         return seguidorRepositorio.save(seguidor);
     }
 

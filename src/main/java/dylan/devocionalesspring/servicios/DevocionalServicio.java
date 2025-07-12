@@ -86,7 +86,7 @@ public class DevocionalServicio {
 
             // Elimina los comentarios asociados utilizando el servicio de Comentario
             for (Comentario comentario : devocional.getComentarios()) {
-
+                comentarioServicio.eliminarComentario(comentario.getId());
             }
 
             // Elimina el devocional
