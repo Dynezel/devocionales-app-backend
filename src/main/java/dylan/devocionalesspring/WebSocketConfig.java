@@ -1,5 +1,6 @@
 package dylan.devocionalesspring;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServletServerHttpRequest;
@@ -16,13 +17,27 @@ import java.util.Map;
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+    @Value("${redis.relay.host}")
+    private String relayHost;
 
+    @Value("${redis.relay.port}")
+    private int relayPort;
+
+    @Value("${redis.relay.username}")
+    private String username;
+
+    @Value("${redis.relay.password}")
+    private String password;
     @Override
-    public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/topic", "/queue"); // `queue` para mensajes privados
-        config.setApplicationDestinationPrefixes("/app"); // Cliente envía a /app/...
-        config.setUserDestinationPrefix("/user"); // Para enviar a un usuario específico
+    public void configureMessageBroker(MessageBrokerRegistry registry) {
+        registry.enableStompBrokerRelay("/topic", "/queue", "/user")
+                .setRelayHost(relayHost)
+                .setRelayPort(relayPort)
+                .setClientLogin(username)
+                .setClientPasscode(password);
 
+        registry.setApplicationDestinationPrefixes("/app");
+        registry.setUserDestinationPrefix("/user");
     }
 
     @Override
