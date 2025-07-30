@@ -17,24 +17,29 @@ import java.util.Map;
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
-    @Value("${redis.relay.host}")
-    private String relayHost;
+    @Value("${spring.rabbitmq.host}")
+    private String rabbitHost;
 
-    @Value("${redis.relay.port}")
-    private int relayPort;
+    @Value("${spring.rabbitmq.port}")
+    private int rabbitPort;
 
-    @Value("${redis.relay.username}")
+    @Value("${spring.rabbitmq.username}")
     private String username;
 
-    @Value("${redis.relay.password}")
+    @Value("${spring.rabbitmq.password}")
     private String password;
+    @Value("${spring.rabbitmq.virtual-host}")
+    private String virtualHost;
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.enableStompBrokerRelay("/topic", "/queue", "/user")
-                .setRelayHost(relayHost)
-                .setRelayPort(relayPort)
+                .setRelayHost(rabbitHost)
+                .setRelayPort(rabbitPort)
                 .setClientLogin(username)
-                .setClientPasscode(password);
+                .setClientPasscode(password)
+                .setVirtualHost(virtualHost)
+                .setSystemLogin(username)
+                .setSystemPasscode(password);
 
         registry.setApplicationDestinationPrefixes("/app");
         registry.setUserDestinationPrefix("/user");
@@ -52,8 +57,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         @Override
         protected Principal determineUser(ServerHttpRequest request, WebSocketHandler wsHandler, Map<String, Object> attributes) {
             ServletServerHttpRequest servletRequest = (ServletServerHttpRequest) request;
-            String userId = servletRequest.getServletRequest().getParameter("userId");
-            return () -> userId; // Usamos el ID del usuario como nombre del principal
+            Principal userPrincipal = servletRequest.getServletRequest().getUserPrincipal();
+            return userPrincipal != null ? userPrincipal : () -> "anon";
         }
     }
 }
