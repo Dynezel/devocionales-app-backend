@@ -1,11 +1,14 @@
 package dylan.devocionalesspring.RedisConfig;
 
+import io.lettuce.core.resource.ClientResources;
+import io.lettuce.core.resource.DefaultClientResources;
 import org.springframework.context.annotation.Bean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisPassword;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
@@ -14,6 +17,7 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 
 @Configuration
 public class RedisConfig {
+
     @Value("${REDIS_HOST}")
     private String host;
 
@@ -23,15 +27,27 @@ public class RedisConfig {
     @Value("${REDIS_PASSWORD}")
     private String password;
 
-    @Bean
-    public LettuceConnectionFactory redisConnectionFactory() {
-        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
-        config.setHostName(host);
-        config.setPort(port);
-        config.setPassword(RedisPassword.of(password));
-        config.setUsername("default"); // Upstash lo requiere
+    @Bean(destroyMethod = "shutdown")
+    public ClientResources clientResources() {
+        return DefaultClientResources.create();
+    }
 
-        return new LettuceConnectionFactory(config);
+    @Bean
+    public LettuceConnectionFactory redisConnectionFactory(ClientResources clientResources) {
+
+        RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration();
+        redisConfig.setHostName(host);
+        redisConfig.setPort(port);
+        redisConfig.setPassword(RedisPassword.of(password));
+        redisConfig.setUsername("default"); // requerido por Upstash
+
+        // Configuración Lettuce para SSL
+        LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder()
+                .clientResources(clientResources)
+                .useSsl()  // <- importante activar SSL
+                .build();
+
+        return new LettuceConnectionFactory(redisConfig, clientConfig);
     }
 
     @Bean
