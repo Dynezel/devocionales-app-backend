@@ -59,10 +59,23 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(connectionFactory);
-        template.setValueSerializer(new Jackson2JsonRedisSerializer<>(Object.class));
-        return template;
-    }
+public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
+    RedisTemplate<String, Object> template = new RedisTemplate<>();
+    template.setConnectionFactory(connectionFactory);
+
+    // Configurar ObjectMapper
+    ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.registerModule(new JavaTimeModule()); // Habilita soporte para LocalDateTime
+    objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // Fechas en ISO 8601
+
+    Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(Object.class);
+    serializer.setObjectMapper(objectMapper);
+
+    template.setDefaultSerializer(serializer);
+    template.setValueSerializer(serializer);
+    template.setKeySerializer(new StringRedisSerializer());
+
+    template.afterPropertiesSet();
+    return template;
+}
 }
