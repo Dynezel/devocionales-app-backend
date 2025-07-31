@@ -19,6 +19,9 @@ public class RedisSubscriber implements MessageListener {
     public void onMessage(Message message, byte[] pattern) {
         try {
             String json = new String(message.getBody());
+            System.out.println("Mensaje recibido en RedisSubscriber: " + json);
+
+            // Parseo
             ObjectMapper mapper = new ObjectMapper();
             mapper.findAndRegisterModules();
             mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
@@ -26,6 +29,8 @@ public class RedisSubscriber implements MessageListener {
 
             String emisorId = mensajeDTO.getEmisor().getIdUsuario().toString();
             String receptorId = mensajeDTO.getReceptor().getIdUsuario().toString();
+
+            System.out.println("Enviando mensaje a usuarios: emisorId=" + emisorId + ", receptorId=" + receptorId);
 
             simpMessagingTemplate.convertAndSendToUser(emisorId, "/queue/messages", mensajeDTO);
             simpMessagingTemplate.convertAndSendToUser(receptorId, "/queue/messages", mensajeDTO);

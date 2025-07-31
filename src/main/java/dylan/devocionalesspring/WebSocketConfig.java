@@ -16,7 +16,6 @@ import java.util.Map;
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
-
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         // Broker embebido, el mensaje sale por /queue o /topic
@@ -40,9 +39,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 String query = servletRequest.getServletRequest().getQueryString();
                 if (query != null && query.contains("userId=")) {
                     String userId = query.replaceAll(".*userId=([^&]+).*", "$1");
+                    System.out.println("Asignando principal userId = " + userId);
                     return () -> userId;
                 }
             }
+            System.out.println("Asignando principal anon");
             return () -> "anon";
         }
     }
