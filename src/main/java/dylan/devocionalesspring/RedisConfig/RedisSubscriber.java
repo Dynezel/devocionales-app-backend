@@ -1,6 +1,7 @@
 package dylan.devocionalesspring.RedisConfig;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import dylan.devocionalesspring.dto.MensajeDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.Message;
@@ -19,6 +20,8 @@ public class RedisSubscriber implements MessageListener {
         try {
             String json = new String(message.getBody());
             ObjectMapper mapper = new ObjectMapper();
+            mapper.findAndRegisterModules();
+            mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
             MensajeDTO mensajeDTO = mapper.readValue(json, MensajeDTO.class);
 
             String emisorId = mensajeDTO.getEmisor().getIdUsuario().toString();
