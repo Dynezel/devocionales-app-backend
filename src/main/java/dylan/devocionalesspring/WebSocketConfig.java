@@ -36,9 +36,14 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     static class CustomHandshakeHandler extends DefaultHandshakeHandler {
         @Override
         protected Principal determineUser(ServerHttpRequest request, WebSocketHandler wsHandler, Map<String, Object> attributes) {
-            ServletServerHttpRequest servletRequest = (ServletServerHttpRequest) request;
-            Principal userPrincipal = servletRequest.getServletRequest().getUserPrincipal();
-            return userPrincipal != null ? userPrincipal : () -> "anon";
+            if (request instanceof ServletServerHttpRequest servletRequest) {
+                String query = servletRequest.getServletRequest().getQueryString();
+                if (query != null && query.contains("userId=")) {
+                    String userId = query.replaceAll(".*userId=([^&]+).*", "$1");
+                    return () -> userId;
+                }
+            }
+            return () -> "anon";
         }
     }
 }
