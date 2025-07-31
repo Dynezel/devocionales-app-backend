@@ -62,7 +62,7 @@ public class RedisConfig {
 
         // Configuramos el ObjectMapper
         ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
+        mapper.findAndRegisterModules();
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         // Usamos el serializador recomendado
