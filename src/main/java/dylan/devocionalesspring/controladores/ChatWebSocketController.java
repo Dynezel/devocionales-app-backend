@@ -48,12 +48,6 @@ public class ChatWebSocketController {
                 new UsuarioDTO(mensaje.getEmisor()),
                 new UsuarioDTO(mensaje.getReceptor())
         );
-
-        // Enviar directo a través de simpMessagingTemplate para probar
-        simpMessagingTemplate.convertAndSendToUser(emisorId.toString(), "/queue/messages", mensajeDTO);
-        simpMessagingTemplate.convertAndSendToUser(receptorId.toString(), "/queue/messages", mensajeDTO);
-
-        // Comentá esta línea mientras probás sin Redis
-        // redisPublisher.publicar("chat-mensajes", mensajeDTO);
+        redisPublisher.publicar(mensajeDTO);
     }
 }
