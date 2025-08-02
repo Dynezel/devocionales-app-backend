@@ -18,8 +18,7 @@ import java.util.Map;
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        // Broker embebido, el mensaje sale por /queue o /topic
-        registry.enableSimpleBroker("/topic", "/queue", "/user");
+        // No usamos ningún broker embebido
         registry.setApplicationDestinationPrefixes("/app");
         registry.setUserDestinationPrefix("/user");
     }
@@ -43,7 +42,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     return () -> userId;
                 }
             }
-            System.out.println("Asignando principal anon");
             return () -> "anon";
         }
     }
