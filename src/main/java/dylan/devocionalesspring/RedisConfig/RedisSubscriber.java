@@ -9,31 +9,34 @@ import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
+
 @Component
 public class RedisSubscriber implements MessageListener {
 
-    @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
+    private final SimpMessagingTemplate messagingTemplate;
+    private final ObjectMapper mapper;
+
+    public RedisSubscriber(SimpMessagingTemplate messagingTemplate) {
+        this.messagingTemplate = messagingTemplate;
+        this.mapper = new ObjectMapper()
+                .findAndRegisterModules()
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    }
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
         try {
-            String json = new String(message.getBody());
-            System.out.println("Mensaje recibido en RedisSubscriber: " + json);
+            String json = new String(message.getBody(), StandardCharsets.UTF_8);
+            MensajeDTO dto = mapper.readValue(json, MensajeDTO.class);
 
-            // Parseo
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.findAndRegisterModules();
-            mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-            MensajeDTO mensajeDTO = mapper.readValue(json, MensajeDTO.class);
+            String emisor = dto.getEmisor().getIdUsuario().toString();
+            String receptor = dto.getReceptor().getIdUsuario().toString();
 
-            String emisorId = mensajeDTO.getEmisor().getIdUsuario().toString();
-            String receptorId = mensajeDTO.getReceptor().getIdUsuario().toString();
+            // 🚀 enviamos a ambos:
+            messagingTemplate.convertAndSendToUser(emisor,  "/queue/messages", dto);
+            messagingTemplate.convertAndSendToUser(receptor, "/queue/messages", dto);
 
-            System.out.println("Enviando mensaje a usuarios: emisorId=" + emisorId + ", receptorId=" + receptorId);
-
-            simpMessagingTemplate.convertAndSendToUser(emisorId, "/queue/messages", mensajeDTO);
-            simpMessagingTemplate.convertAndSendToUser(receptorId, "/queue/messages", mensajeDTO);
         } catch (Exception e) {
             e.printStackTrace();
         }
