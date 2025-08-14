@@ -21,7 +21,6 @@ import java.util.*;
 
 @Slf4j
 @RestController
-@CrossOrigin("http://localhost:5173")
 public class DevocionalControlador {
 
     @Autowired
@@ -109,3 +108,4 @@ public class DevocionalControlador {
     }
 
     }
+
