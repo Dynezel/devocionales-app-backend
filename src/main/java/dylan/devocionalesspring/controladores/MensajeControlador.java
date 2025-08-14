@@ -56,9 +56,11 @@ public class MensajeControlador {
     @GetMapping("/conversacion")
     public ResponseEntity<List<Mensaje>> obtenerConversacion(
             @RequestParam Long emisorId,
-            @RequestParam Long receptorId) {
+            @RequestParam Long receptorId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
 
-        List<Mensaje> conversacion = mensajeServicio.obtenerConversacion(emisorId, receptorId);
+        List<Mensaje> conversacion = mensajeServicio.obtenerConversacion(emisorId, receptorId, page, size);
         return ResponseEntity
                 .ok()
                 .contentType(MediaType.APPLICATION_JSON)
