@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -57,8 +58,8 @@ public class MensajeServicio {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "fechaEnvio"));
         Page<Mensaje> pagina = mensajeRepositorio.obtenerConversacion(emisorId, receptorId, pageable);
 
-        // ⚠️ React quiere mensajes en orden ascendente para mostrarlos bien
-        List<Mensaje> lista = pagina.getContent();
+        // ⚠️ Crear copia mutable antes de invertir
+        List<Mensaje> lista = new ArrayList<>(pagina.getContent());
         Collections.reverse(lista);
 
         return lista;
