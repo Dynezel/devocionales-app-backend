@@ -49,9 +49,14 @@ public class MensajeServicio {
         return mensajeRepositorio.findByReceptor(receptor);
     }
 
-    public List<Mensaje> obtenerConversacion(Long emisorId, Long receptorId) {
-        Usuario emisor = usuarioRepositorio.findById(emisorId).orElseThrow(() -> new RuntimeException("Emisor no encontrado"));
-        Usuario receptor = usuarioRepositorio.findById(receptorId).orElseThrow(() -> new RuntimeException("Receptor no encontrado"));
-        return mensajeRepositorio.findByUsuarios(emisorId, receptorId);
+    public List<Mensaje> obtenerConversacion(Long emisorId, Long receptorId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "fechaEnvio"));
+        Page<Mensaje> pagina = mensajeRepositorio.obtenerConversacion(emisorId, receptorId, pageable);
+
+        // ⚠️ React quiere mensajes en orden ascendente para mostrarlos bien
+        List<Mensaje> lista = pagina.getContent();
+        Collections.reverse(lista);
+
+        return lista;
     }
 }
