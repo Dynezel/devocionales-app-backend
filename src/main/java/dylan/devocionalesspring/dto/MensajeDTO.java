@@ -44,19 +44,19 @@ public class MensajeDTO {
         this.fechaEnvio = fechaEnvio;
     }
 
-    public UsuarioDTO getEmisor() {
+    public UsuarioDTONoImagen getEmisor() {
         return emisor;
     }
 
-    public void setEmisor(UsuarioDTO emisor) {
+    public void setEmisor(UsuarioDTONoImagen emisor) {
         this.emisor = emisor;
     }
 
-    public UsuarioDTO getReceptor() {
+    public UsuarioDTONoImagen getReceptor() {
         return receptor;
     }
 
-    public void setReceptor(UsuarioDTO receptor) {
+    public void setReceptor(UsuarioDTONoImagen receptor) {
         this.receptor = receptor;
     }
 }
