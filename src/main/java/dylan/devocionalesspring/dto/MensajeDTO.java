@@ -6,13 +6,13 @@ public class MensajeDTO {
     private Long id;
     private String contenido;
     private LocalDateTime fechaEnvio;
-    private UsuarioDTO emisor;
-    private UsuarioDTO receptor;
+    private UsuarioDTONoImagen emisor;
+    private UsuarioDTONoImagen receptor;
 
     public MensajeDTO() {}
 
     public MensajeDTO(Long id, String contenido, LocalDateTime fechaEnvio,
-                      UsuarioDTO emisor, UsuarioDTO receptor) {
+                      UsuarioDTONoImagen emisor, UsuarioDTONoImagen receptor) {
         this.id = id;
         this.contenido = contenido;
         this.fechaEnvio = fechaEnvio;

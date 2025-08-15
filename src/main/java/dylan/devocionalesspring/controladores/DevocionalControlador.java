@@ -1,5 +1,8 @@
 package dylan.devocionalesspring.controladores;
 
+import dylan.devocionalesspring.dto.DevocionalConAutor;
+import dylan.devocionalesspring.dto.DevocionalDTO;
+import dylan.devocionalesspring.dto.UsuarioDTO;
 import dylan.devocionalesspring.entidades.Devocional;
 import dylan.devocionalesspring.entidades.Usuario;
 import dylan.devocionalesspring.excepciones.UsuarioNoEncontradoExcepcion;
@@ -45,8 +48,11 @@ public class DevocionalControlador {
 
     @PreAuthorize("hasAnyRole('ROLE_USUARIO','ROLE_ADMINISTRADOR')")
     @GetMapping("/devocionales")
-    public List<Devocional> listarDevocionalesConAutor() {
-        return devocionalRepositorio.findAll();
+    public List<DevocionalConAutor> listarDevocionalesConAutor() {
+        List<Devocional> devocionales = devocionalRepositorio.findAll();
+        List<DevocionalConAutor> devocionalConAutores = devocionales.stream()
+                .map(DevocionalConAutor::new).toList();
+        return devocionalConAutores;
     }
 
 
@@ -108,4 +114,3 @@ public class DevocionalControlador {
     }
 
     }
-

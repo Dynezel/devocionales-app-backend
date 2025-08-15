@@ -1,5 +1,6 @@
 package dylan.devocionalesspring.servicios;
 
+import dylan.devocionalesspring.dto.MensajeDTO;
 import dylan.devocionalesspring.entidades.Mensaje;
 import dylan.devocionalesspring.entidades.Notificacion;
 import dylan.devocionalesspring.entidades.Usuario;
@@ -54,12 +55,12 @@ public class MensajeServicio {
         return mensajeRepositorio.findByReceptor(receptor);
     }
 
-    public List<Mensaje> obtenerConversacion(Long emisorId, Long receptorId, int page, int size) {
+    public List<MensajeDTO> obtenerConversacion(Long emisorId, Long receptorId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "fechaEnvio"));
-        Page<Mensaje> pagina = mensajeRepositorio.obtenerConversacion(emisorId, receptorId, pageable);
+        Page<MensajeDTO> pagina = mensajeRepositorio.obtenerConversacion(emisorId, receptorId, pageable);
 
         // ⚠️ Crear copia mutable antes de invertir
-        List<Mensaje> lista = new ArrayList<>(pagina.getContent());
+        List<MensajeDTO> lista = new ArrayList<>(pagina.getContent());
         Collections.reverse(lista);
 
         return lista;

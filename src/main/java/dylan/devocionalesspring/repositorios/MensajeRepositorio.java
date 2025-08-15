@@ -1,5 +1,6 @@
 package dylan.devocionalesspring.repositorios;
 
+import dylan.devocionalesspring.dto.MensajeDTO;
 import dylan.devocionalesspring.entidades.Mensaje;
 import dylan.devocionalesspring.entidades.Usuario;
 import org.springframework.data.domain.Page;
@@ -25,7 +26,7 @@ public interface MensajeRepositorio extends JpaRepository<Mensaje, Long> {
             "WHERE (m.emisor.idUsuario = :emisorId AND m.receptor.idUsuario = :receptorId) " +
             "   OR (m.emisor.idUsuario = :receptorId AND m.receptor.idUsuario = :emisorId) " +
             "ORDER BY m.fechaEnvio DESC")
-    Page<Mensaje> obtenerConversacion(
+    Page<MensajeDTO> obtenerConversacion(
             @Param("emisorId") Long emisorId,
             @Param("receptorId") Long receptorId,
             Pageable pageable);

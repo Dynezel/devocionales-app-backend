@@ -1,12 +1,10 @@
 package dylan.devocionalesspring.entidades;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import dylan.devocionalesspring.enumeraciones.Rol;
+import dylan.devocionalesspring.dto.UsuarioDTO;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +24,9 @@ public class Devocional {
     @Column(nullable = false)
     private int vistas = 0;
 
+    @ManyToOne
+    private Usuario autor;
+
     @OneToMany(mappedBy = "devocionalId", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MeGusta> meGustas = new ArrayList<>();
 
@@ -40,6 +41,19 @@ public class Devocional {
     // Método para agregar un comentario a la lista
     public void agregarComentario(Comentario comentario) {
         comentarios.add(comentario);
+    }
+    public UsuarioDTO hacerAutorDTO(Usuario autor) {
+        return new UsuarioDTO(autor.getIdUsuario(),
+                autor.getNombre(),
+                autor.getEmail(),
+                autor.getEmail(),
+                autor.getNombreUsuario(),
+                autor.getBiografia(),
+                autor.getCelular(),
+                autor.getContrasenia(),
+                autor.getFotoPerfil(),
+                autor.getBannerPerfil(),
+                autor.getRol());
     }
 }
 
