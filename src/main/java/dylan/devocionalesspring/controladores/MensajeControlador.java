@@ -1,6 +1,5 @@
 package dylan.devocionalesspring.controladores;
 
-import dylan.devocionalesspring.dto.MensajeDTO;
 import dylan.devocionalesspring.entidades.Mensaje;
 import dylan.devocionalesspring.entidades.Usuario;
 import dylan.devocionalesspring.repositorios.MensajeRepositorio;
@@ -55,13 +54,11 @@ public class MensajeControlador {
     }
 
     @GetMapping("/conversacion")
-    public ResponseEntity<List<MensajeDTO>> obtenerConversacion(
+    public ResponseEntity<List<Mensaje>> obtenerConversacion(
             @RequestParam Long emisorId,
-            @RequestParam Long receptorId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
+            @RequestParam Long receptorId) {
 
-        List<MensajeDTO> conversacion = mensajeServicio.obtenerConversacion(emisorId, receptorId, page, size);
+        List<Mensaje> conversacion = mensajeServicio.obtenerConversacion(emisorId, receptorId);
         return ResponseEntity
                 .ok()
                 .contentType(MediaType.APPLICATION_JSON)

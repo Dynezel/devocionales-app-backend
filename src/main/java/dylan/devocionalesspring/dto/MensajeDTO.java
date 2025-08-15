@@ -6,13 +6,13 @@ public class MensajeDTO {
     private Long id;
     private String contenido;
     private LocalDateTime fechaEnvio;
-    private UsuarioDTONoImagen emisor;
-    private UsuarioDTONoImagen receptor;
+    private UsuarioDTO emisor;
+    private UsuarioDTO receptor;
 
     public MensajeDTO() {}
 
     public MensajeDTO(Long id, String contenido, LocalDateTime fechaEnvio,
-                      UsuarioDTONoImagen emisor, UsuarioDTONoImagen receptor) {
+                      UsuarioDTO emisor, UsuarioDTO receptor) {
         this.id = id;
         this.contenido = contenido;
         this.fechaEnvio = fechaEnvio;
@@ -44,19 +44,19 @@ public class MensajeDTO {
         this.fechaEnvio = fechaEnvio;
     }
 
-    public UsuarioDTONoImagen getEmisor() {
+    public UsuarioDTO getEmisor() {
         return emisor;
     }
 
-    public void setEmisor(UsuarioDTONoImagen emisor) {
+    public void setEmisor(UsuarioDTO emisor) {
         this.emisor = emisor;
     }
 
-    public UsuarioDTONoImagen getReceptor() {
+    public UsuarioDTO getReceptor() {
         return receptor;
     }
 
-    public void setReceptor(UsuarioDTONoImagen receptor) {
+    public void setReceptor(UsuarioDTO receptor) {
         this.receptor = receptor;
     }
 }

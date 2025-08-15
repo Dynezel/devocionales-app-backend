@@ -3,7 +3,6 @@ package dylan.devocionalesspring.controladores;
 import dylan.devocionalesspring.RedisConfig.RedisPublisher;
 import dylan.devocionalesspring.dto.MensajeDTO;
 import dylan.devocionalesspring.dto.UsuarioDTO;
-import dylan.devocionalesspring.dto.UsuarioDTONoImagen;
 import dylan.devocionalesspring.entidades.Mensaje;
 import dylan.devocionalesspring.servicios.MensajeServicio;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,10 +45,9 @@ public class ChatWebSocketController {
                 mensaje.getId(),
                 mensaje.getContenido(),
                 mensaje.getFechaEnvio(),
-                new UsuarioDTONoImagen(mensaje.getEmisor()),
-                new UsuarioDTONoImagen(mensaje.getReceptor())
+                new UsuarioDTO(mensaje.getEmisor()),
+                new UsuarioDTO(mensaje.getReceptor())
         );
         redisPublisher.publicar(mensajeDTO);
     }
 }
-

@@ -1,10 +1,7 @@
 package dylan.devocionalesspring.repositorios;
 
-import dylan.devocionalesspring.dto.MensajeDTO;
 import dylan.devocionalesspring.entidades.Mensaje;
 import dylan.devocionalesspring.entidades.Usuario;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,15 +18,6 @@ public interface MensajeRepositorio extends JpaRepository<Mensaje, Long> {
             "UNION " +
             "SELECT DISTINCT m.emisor FROM Mensaje m WHERE m.receptor.id = :userId")
     List<Usuario> findConversacionesPorUsuario(@Param("userId") Long userId);
-
-    @Query("SELECT m FROM Mensaje m " +
-            "WHERE (m.emisor.idUsuario = :emisorId AND m.receptor.idUsuario = :receptorId) " +
-            "   OR (m.emisor.idUsuario = :receptorId AND m.receptor.idUsuario = :emisorId) " +
-            "ORDER BY m.fechaEnvio DESC")
-    Page<MensajeDTO> obtenerConversacion(
-            @Param("emisorId") Long emisorId,
-            @Param("receptorId") Long receptorId,
-            Pageable pageable);
 
     //Query para buscar la conversacion entre ambos usuarios
     @Query("SELECT m FROM Mensaje m WHERE (m.emisor.id = :emisorId AND m.receptor.id = :receptorId) OR (m.emisor.id = :receptorId AND m.receptor.id = :emisorId) ORDER BY m.fechaEnvio ASC")

@@ -30,8 +30,8 @@ public class RedisSubscriber implements MessageListener {
             String json = new String(message.getBody(), StandardCharsets.UTF_8);
             MensajeDTO dto = mapper.readValue(json, MensajeDTO.class);
 
-            String emisor = dto.getEmisor().idUsuario().toString();
-            String receptor = dto.getReceptor().idUsuario().toString();
+            String emisor = dto.getEmisor().getIdUsuario().toString();
+            String receptor = dto.getReceptor().getIdUsuario().toString();
 
             // 🚀 enviamos a ambos:
             messagingTemplate.convertAndSendToUser(emisor,  "/queue/messages", dto);
